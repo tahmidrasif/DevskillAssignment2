@@ -15,18 +15,18 @@ function App() {
     { prodName: 'Mobile', price: 300, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,' },
   ]);
 
-  const [singleProduct, setSingleProduct] = useState();
+  const [singleProduct, setSingleProduct] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
 
   const selectProduct = (item) => {
     setShowLoader(true)
-    setSingleProduct({ ...singleProduct, item })
+    setSingleProduct({ ...singleProduct, singleProduct:item })
 
   }
 
   const showListPage = () => {
     setShowLoader(true)
-    setSingleProduct()
+    setSingleProduct({...singleProduct,singleProduct:null})
 
   }
 
