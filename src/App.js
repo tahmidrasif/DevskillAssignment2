@@ -6,54 +6,100 @@ import React, { Component, useEffect, useState } from 'react';
 import gear from './Gear.gif';
 import ProductListFn from './productListFn';
 import ProductDetailsFn from './productDetailsFn';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+  useHistory
+} from "react-router-dom";
 
 function App() {
 
+  const history=useHistory();
+
   const [productList, setProduct] = useState([
-    { prodName: 'Laptop', price: 100, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,' },
-    { prodName: 'Pc', price: 200, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,' },
-    { prodName: 'Mobile', price: 300, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,' },
+    { id: 1, prodName: 'Laptop', price: 100, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,' },
+    { id: 2, prodName: 'Pc', price: 200, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,' },
+    { id: 3, prodName: 'Mobile', price: 300, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,' },
   ]);
 
   const [singleProduct, setSingleProduct] = useState(null);
+  const [productId,setProductId]=useState(null)
   const [showLoader, setShowLoader] = useState(true);
 
-  const selectProduct = (item) => {
+  const selectProduct = (id) => {
     setShowLoader(true)
-    setSingleProduct({ ...singleProduct, singleProduct:item })
+    //setSingleProduct({ ...singleProduct, singleProduct: item })
+    setProductId(id)
+    history.push('/product-details/'+id)
+
 
   }
 
+  console.log(history)
   const showListPage = () => {
     setShowLoader(true)
-    setSingleProduct({...singleProduct,singleProduct:null})
+    setProductId(null)
+    history.push('/')
 
   }
 
- console.log(showLoader)
-
   useEffect(() => {
-    console.log('useEffect')
+
     setTimeout(function () { //Start the timer
       setShowLoader(false)
     }.bind(this), 3000)
-  }, [singleProduct])
+  }, [productId])
 
   return (
-    <p>
+    <>
+      <table>
+        <tr>
+          <td>
+            <Link to='/product-list'>Product List</Link>
+          </td>
+
+        </tr>
+      </table>
+
       {
-        showLoader === true ?
-          <div style={{ top: '50%' }, { left: '50%' }, { position: 'absolute' }}>
-            <img src={gear} />
-          </div> :
-     (singleProduct ?
-        <ProductDetailsFn singleProduct={singleProduct} showListPage={showListPage} /> :
-        <ProductListFn products={productList} selectProduct={selectProduct} />)
+        <Switch>
+          <Route exact path='/'>
+            {
+              showLoader === true ?
+                <div style={{ top: '50%' }, { left: '50%' }, { position: 'absolute' }}>
+                  <img src={gear} />
+                </div> :
+
+
+                <ProductListFn products={productList} selectProduct={selectProduct} />
+            }
+          </Route>
+          <Route exact path='/product-list' render={() => <Redirect exact to='/' />} />
+
+          <Route exact path='/product-details/:id'>
+            {
+              showLoader === true ?
+                <div style={{ top: '50%' }, { left: '50%' }, { position: 'absolute' }}>
+                  <img src={gear} />
+                </div> :
+                <ProductDetailsFn products={productList} showListPage={showListPage} />
+            }
+          </Route>
+
+          <Route path='*'>
+            <p>404 Not Found</p>
+          </Route>
+        </Switch>
+
       }
 
 
+      {/* <ProductDetailsFn singleProduct={singleProduct} showListPage={showListPage} /> : */}
 
-    </p>
+    </>
   );
 }
 
